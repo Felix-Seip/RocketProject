@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Rocket API
+  description: This API is meant for the self flying rocket designed and developed by Felix Seip.
+  contact:
+    email: felixseip01@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/felix-seip2/rocket-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /flight/data:
+    get:
+      summary: Gets all the flight data
+      description: |
+        Gets all the flight data collected by the rocket. This includes the temperature of the engine, altitude of the rocket, atmospheric pressure around the rocket, wind pushing on the rocket, angle of the rocket, and the speed of the rocket.
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlightDataItem'
+        400:
+          description: bad input parameter
+  /flight/data/{type}:
+    get:
+      summary: Gets all the flight data of a certain type
+      description: |
+        Gets all the flight data, of a certain type, collected by the rocket. This could be the temperature of the engine, altitude of the rocket, atmospheric pressure around the rocket, wind pushing on the rocket, angle of the rocket, or the speed of the rocket.
+      parameters:
+      - name: type
+        in: path
+        description: Type of the flight data that the user wants to retrieve.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: startTimestamp
+        in: query
+        description: The time for which the data should be received. This means that the returned data was collected at and after the given time.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: endTimestamp
+        in: header
+        description: The time for which the data should be received. This means that the returned data was collected before or until the given time.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: number
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightDataItem'
+        400:
+          description: bad input parameter
+components:
+  schemas:
+    FlightDataItem:
+      required:
+      - id
+      - type
+      - value
+      - startTime
+      - endTime
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        type:
+          type: string
+          example: angle
+        value:
+          type: number
+          example: 90
+        startTime:
+          type: number
+          format: timestamp
+          example: 1545652800
+        endTime:
+          type: number
+          format: timestamp
+          example: 1545663600

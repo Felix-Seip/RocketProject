@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Mission Control</string>
+    <string name="action_settings">Scan for rockets</string>
+</resources>
