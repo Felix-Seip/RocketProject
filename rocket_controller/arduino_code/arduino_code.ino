@@ -4,20 +4,19 @@
 #include "TotalRGB.h"
 #include <Servo.h>
 
-// #define HC06 Serial3
 Adafruit_BMP085 bmp;
 CTotalRGB rgbControl(13, 12, 11);
-Servo servo;
+//Servo servo;
 
 SoftwareSerial mySerial(0, 1); // RX, TX
 
 void setup() {
   rgbControl.SetColor(PURPLE);
-  Serial.begin(9600);
-  Serial.println("Type AT commands!"); // put your setup code here, to run once:
-  mySerial.begin(9600);
-  pinMode(10, OUTPUT);
-  servo.attach(9);
+  mySerial.begin(9600);  
+  bmp.begin();  
+  
+  // pinMode(10, OUTPUT);
+  // servo.attach(9);
 }
 
 void loop() {
@@ -26,13 +25,29 @@ void loop() {
 
   if (mySerial.available()) {
     rgbControl.SetColor(BLUE);
-    Serial.println(mySerial.read());
+    mySerial.read();
+    //TODO: If a certain character comes in, start the launch sequence
   }
 
-  mySerial.write("Hello World");
-
+  SerialFlush();  
+  SendData("EngineTemperature", bmp.readTemperature(), 0);
   rgbControl.SetColor(PURPLE);
-  //delay(1000);
+  delay(1000);
+}
+
+void SerialFlush(){
+  while(mySerial.available() > 0) {
+    char t = mySerial.read();
+  }
+}
+
+void SendData(const String type, const float value, const long collectionTime){
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& data  = jsonBuffer.createObject();
+  data["type"] = type;
+  data["value"] = value;
+  data["collectionTime"] = collectionTime;
+  data.printTo(mySerial);
 }
 
 void CheckSensors(){
@@ -41,5 +56,5 @@ void CheckSensors(){
     digitalWrite(10, HIGH); // send high signal to buzzer 
   }
   digitalWrite(10, LOW);
-  rgbControl.SetColor(WHITE);
+  rgbControl.SetColor(GREEN);
 }

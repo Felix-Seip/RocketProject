@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             public void onDeviceConnected(BluetoothDevice device) {
                 FragmentController.switchFragment(_dashboardFragment, R.id.fragment_container, null);
                 _dashboardFragment.setBluetoothDevice  (device);
-                _dashboardFragment.startDataThread();
+                _dashboardFragment.startDataThread(_bluetoothController);
             }
 
             @Override

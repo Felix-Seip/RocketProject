@@ -63,19 +63,19 @@ public class DashboardFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_chart:
+                //TODO: Show fragment with charts and graphs to analyze the data coming from the rocket
                 //searchForRockets();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void startDataThread(){
+    public void startDataThread(Bluetooth controller){
         //BluetoothDevice device, RocketDataCallback rocketDataCallback
-        RocketDataThread thread = new RocketDataThread(_bluetoothDevice, new RocketDataCallback() {
+        RocketDataThread thread = new RocketDataThread(controller.getSocket(), new RocketDataCallback() {
             @Override
             public void onRocketDataReceived(String data) {
-                Log.d("RocketThread",data);
-                boolean bla = false;
+                Log.d("RocketThread", data);
             }
         });
 

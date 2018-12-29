@@ -35,7 +35,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         _bluetoothController = ((MainActivity) getActivity()).getBluetoothController();
-
+        _bluetoothController.getSocket();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false);
     }

@@ -18,12 +18,11 @@ public class RocketDataThread extends Thread implements Serializable {
     private OutputStream _dataOutputStream;
     private boolean _stopThread = false;
 
-    public RocketDataThread (BluetoothDevice device, RocketDataCallback rocketDataCallback) {
-        _device = device;
+    public RocketDataThread (BluetoothSocket socket, RocketDataCallback rocketDataCallback) {
+        _bluetoothDeviceSocket = socket;
         _rocketDataCallback = rocketDataCallback;
 
         try {
-            _bluetoothDeviceSocket = getRocketSocket();
             _dataInputStream = _bluetoothDeviceSocket.getInputStream();
             _dataOutputStream = _bluetoothDeviceSocket.getOutputStream();
         } catch (IOException e) {
@@ -49,6 +48,10 @@ public class RocketDataThread extends Thread implements Serializable {
                         for(int i = 0; i < bytesAvailable; i++)
                         {
                             byte byteData = packetBytes[i];
+                            if(readBufferPosition + 1 > readBuffer.length){
+                                break;
+                            }
+
                             readBuffer[readBufferPosition++] = byteData;
                         }
                         _rocketDataCallback.onRocketDataReceived(new String(readBuffer));
@@ -66,10 +69,4 @@ public class RocketDataThread extends Thread implements Serializable {
             }
         }
     }
-
-    private BluetoothSocket getRocketSocket() throws IOException {
-        //return _device.createRfcommSocketToServiceRecord(UUID.randomUUID());
-        return _device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
-    }
-
 }
