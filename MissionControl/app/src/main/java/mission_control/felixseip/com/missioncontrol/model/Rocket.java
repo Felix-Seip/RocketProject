@@ -1,7 +1,6 @@
-package mission_control.felixseip.com.missioncontrol;
+package mission_control.felixseip.com.missioncontrol.model;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 
 import java.io.Serializable;
 import java.util.List;

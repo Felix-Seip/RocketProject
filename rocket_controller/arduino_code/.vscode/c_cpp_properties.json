@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/felix/Downloads/arduino-1.8.8-linux64/arduino-1.8.8/libraries/Servo/src",
                 "/home/felix/Downloads/arduino-1.8.8-linux64/arduino-1.8.8/tools/**",
                 "/home/felix/Downloads/arduino-1.8.8-linux64/arduino-1.8.8/hardware/arduino/avr/**"
             ],

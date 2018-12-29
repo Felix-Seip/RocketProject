@@ -1,4 +1,4 @@
-package mission_control.felixseip.com.missioncontrol;
+package mission_control.felixseip.com.missioncontrol.controller;
 
 import android.Manifest;
 import android.app.Activity;

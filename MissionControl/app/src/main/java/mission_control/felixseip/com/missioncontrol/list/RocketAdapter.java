@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import mission_control.felixseip.com.missioncontrol.R;
-import mission_control.felixseip.com.missioncontrol.Rocket;
+import mission_control.felixseip.com.missioncontrol.model.Rocket;
 
 public class RocketAdapter extends ArrayAdapter<Rocket> {
 

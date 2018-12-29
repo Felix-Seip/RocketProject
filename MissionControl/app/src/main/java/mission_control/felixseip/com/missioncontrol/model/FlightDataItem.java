@@ -1,4 +1,4 @@
-package mission_control.felixseip.com.missioncontrol;
+package mission_control.felixseip.com.missioncontrol.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

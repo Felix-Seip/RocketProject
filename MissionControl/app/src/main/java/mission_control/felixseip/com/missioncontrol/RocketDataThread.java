@@ -2,18 +2,15 @@ package mission_control.felixseip.com.missioncontrol;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
-interface RocketDataCallback {
-    void onRocketDataReceived(String data);
-}
-
-public class RocketDataThread extends Thread {
+public class RocketDataThread extends Thread implements Serializable {
     private BluetoothDevice _device;
     private RocketDataCallback _rocketDataCallback;
     private BluetoothSocket _bluetoothDeviceSocket;
@@ -27,7 +24,6 @@ public class RocketDataThread extends Thread {
 
         try {
             _bluetoothDeviceSocket = getRocketSocket();
-            _bluetoothDeviceSocket.connect();
             _dataInputStream = _bluetoothDeviceSocket.getInputStream();
             _dataOutputStream = _bluetoothDeviceSocket.getOutputStream();
         } catch (IOException e) {
@@ -37,8 +33,6 @@ public class RocketDataThread extends Thread {
 
     @Override
     public void run() {
-        final byte delimiter = 10; //This is the ASCII code for a newline character
-
         int readBufferPosition = 0;
         byte[] readBuffer = new byte[1024];
 

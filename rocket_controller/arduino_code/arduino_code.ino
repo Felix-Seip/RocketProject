@@ -2,61 +2,44 @@
 #include <Adafruit_BMP085.h>
 #include <SoftwareSerial.h>
 #include "TotalRGB.h"
+#include <Servo.h>
 
 // #define HC06 Serial3
 Adafruit_BMP085 bmp;
 CTotalRGB rgbControl(13, 12, 11);
-SoftwareSerial hc06(0, 1);
+Servo servo;
+
+SoftwareSerial mySerial(0, 1); // RX, TX
 
 void setup() {
-  // put your setup code here, to run once:
-
+  rgbControl.SetColor(PURPLE);
   Serial.begin(9600);
-  hc06.begin(9600);
-  rgbControl.SetColor(BLUE);
-
-  //CheckSensors();
+  Serial.println("Type AT commands!"); // put your setup code here, to run once:
+  mySerial.begin(9600);
+  pinMode(10, OUTPUT);
+  servo.attach(9);
 }
 
 void loop() {
 
-  if (!hc06.available()){
-    Serial.write("Error");
+  CheckSensors();
+
+  if (mySerial.available()) {
+    rgbControl.SetColor(BLUE);
+    Serial.println(mySerial.read());
   }
 
-  //Write data from HC06 to Serial Monitor
-  if (hc06.available()){
-    Serial.write(hc06.read());
-  }
-  
-  //Write from Serial Monitor to HC06
-  if (Serial.available()){
-    hc06.write(Serial.read());
-  } 
+  mySerial.write("Hello World");
 
-  // CheckSensors();
-
-  // SendData("EngineTemperature", bmp.readTemperature(), 0);
-  // SendData("AtmosphericPressure", bmp.readPressure()/100, 0);
-  // SendData("Altitude", 0, 0);
-  // SendData("Angle", 0, 0);
-  // SendData("WindSpeed", 0, 0);
-  // SendData("Velocity", 0, 0);
-    
-  // delay(1000);
-}
-
-void SendData(const String type, const float value, const long collectionTime){
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& data  = jsonBuffer.createObject();
-  data["type"] = type;
-  data["value"] = value;
-  data["collectionTime"] = collectionTime;
+  rgbControl.SetColor(PURPLE);
+  //delay(1000);
 }
 
 void CheckSensors(){
   while(!bmp.begin()){
     rgbControl.Blink(BLACK, RED, 100);
+    digitalWrite(10, HIGH); // send high signal to buzzer 
   }
-  rgbControl.SetColor(GREEN);
+  digitalWrite(10, LOW);
+  rgbControl.SetColor(WHITE);
 }

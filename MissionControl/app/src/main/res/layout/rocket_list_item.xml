@@ -14,7 +14,7 @@
         android:padding="10dip"
         android:textSize="20dip"
         android:textStyle="bold"
-        android:text="Name">
+        android:text="@string/name">
     </TextView>
 
     <TextView
@@ -24,7 +24,7 @@
         android:padding="10dip"
         android:textSize="20dip"
         android:textStyle="bold"
-        android:text="Type" />
+        android:text="@string/type" />
 
     <TextView
         android:id="@+id/rocket_reachable"
@@ -34,6 +34,6 @@
         android:textSize="16dip"
         android:textColor="@android:color/holo_green_dark"
         android:textStyle="bold"
-        android:text="Reachable" />
+        android:text="@string/reachable" />
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package mission_control.felixseip.com.missioncontrol;
+package mission_control.felixseip.com.missioncontrol.fragment;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -19,7 +19,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import me.aflak.bluetooth.Bluetooth;
-import me.aflak.bluetooth.DiscoveryCallback;
+import mission_control.felixseip.com.missioncontrol.MainActivity;
+import mission_control.felixseip.com.missioncontrol.R;
+import mission_control.felixseip.com.missioncontrol.model.Rocket;
 import mission_control.felixseip.com.missioncontrol.list.RocketAdapter;
 
 public class MainFragment extends Fragment {
@@ -27,6 +29,7 @@ public class MainFragment extends Fragment {
     private ConstraintLayout _mainContentView;
     private Bluetooth _bluetoothController;
     private RocketAdapter _adapter;
+    private Snackbar _discoverySnackbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,8 +68,26 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void init() {
+    public void showScanningSnackbar() {
+        _adapter.clear();
+        _discoverySnackbar = Snackbar.make(_mainContentView, "Scanning for nearby rockets...", Snackbar.LENGTH_INDEFINITE);
+        _discoverySnackbar.setAction("Stop", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _bluetoothController.stopScanning();
+                Snackbar.make(_mainContentView, "Scan stopped...", Snackbar.LENGTH_SHORT).show();
+                _discoverySnackbar.dismiss();
+            }
+        });
 
+        _discoverySnackbar.show();
+    }
+
+    public void addAvailableDevice(BluetoothDevice device) {
+        _adapter.add(new Rocket(device.getAddress(), device.getType() + "", device.getName(), "1.0", device));
+    }
+
+    private void init() {
         _mainContentView = getView().findViewById(R.id.main_content_view);
 
         ArrayList<Rocket> rockets = new ArrayList<>();
@@ -81,13 +102,14 @@ public class MainFragment extends Fragment {
         */
 
         _adapter = new RocketAdapter(getContext(), rockets);
-        _adapter.add(new Rocket("A", "A", "A", "A", null));
         ListView listView = getView().findViewById(R.id.rocket_list);
         listView.setAdapter(_adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Rocket rocket = _adapter.getItem(position);
+                final Rocket rocket = _adapter.getItem(position);
+
+                _discoverySnackbar.dismiss();
 
                 //Stop searching for bluetooth devices
                 try{
@@ -97,62 +119,13 @@ public class MainFragment extends Fragment {
                 }
 
                 //Connect to the selected device
+                Toast.makeText(getContext(), "Connecting to device: " + rocket.getBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
                 _bluetoothController.connectToAddress(rocket.getBluetoothDevice().getAddress());
-
-                Toast.makeText(getContext(), "Connected to device: " + rocket.getBluetoothDevice().getName(), Toast.LENGTH_LONG);
-                //TODO: Create callback that is registered in the main activity to avoid this construct
-                ((MainActivity) getActivity()).getFragmentController().switchFragment(new DashboardFragment(), R.id.fragment_container, null);
             }
         });
     }
 
     private void searchForRockets() {
-
         _bluetoothController.startScanning();
-
-        _bluetoothController.setDiscoveryCallback(new DiscoveryCallback() {
-            @Override
-            public void onDiscoveryStarted() {
-                _adapter.clear();
-                final Snackbar snackbar = Snackbar.make(_mainContentView, "Scanning for nearby rockets...", Snackbar.LENGTH_INDEFINITE);
-                snackbar.setAction("Stop", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        _bluetoothController.stopScanning();
-                        Snackbar.make(_mainContentView, "Scan stopped...", Snackbar.LENGTH_SHORT).show();
-                        snackbar.dismiss();
-                    }
-                });
-
-                snackbar.show();
-            }
-
-            @Override
-            public void onDiscoveryFinished() {
-            }
-
-            @Override
-            public void onDeviceFound(final BluetoothDevice device) {
-                if (device != null) {
-                    if (device.getType() == 1) {
-                        _adapter.add(new Rocket(device.getAddress(), device.getType() + "", device.getName(), "1.0", device));
-                    }
-                }
-            }
-
-            @Override
-            public void onDevicePaired(BluetoothDevice device) {
-                _bluetoothController.stopScanning();
-            }
-
-            @Override
-            public void onDeviceUnpaired(BluetoothDevice device) {
-                _bluetoothController.startScanning();
-            }
-
-            @Override
-            public void onError(String message) {
-            }
-        });
     }
 }

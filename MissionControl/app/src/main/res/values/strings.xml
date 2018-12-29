@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Mission Control</string>
     <string name="action_settings">Scan for rockets</string>
+    <string name="start_launch_sequence">Start Launch Sequence</string>
+    <string name="type">Type</string>
+    <string name="name">Name</string>
+    <string name="reachable">Reachable</string>
 </resources>
